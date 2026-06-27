@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Cliente - Core Cloud</title>
+    <style>
+        :root { --primary: #1e293b; --accent: #2563eb; --bg: #f8fafc; --text: #334155; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; background: var(--bg); color: var(--text); }
+        
+        /* Menu Lateral */
+        aside { width: 260px; background: var(--primary); color: white; display: flex; flex-direction: column; padding: 20px 0; }
+        .logo { padding: 0 20px 30px; font-size: 22px; font-weight: bold; border-bottom: 1px solid #334155; margin-bottom: 20px; }
+        nav { flex-grow: 1; }
+        nav a { display: block; padding: 15px 20px; color: #94a3b8; text-decoration: none; transition: 0.3s; cursor: pointer; }
+        nav a:hover, nav a.active { background: #334155; color: white; border-left: 4px solid var(--accent); }
+        .logout { padding: 20px; border-top: 1px solid #334155; color: #f87171; text-decoration: none; cursor: pointer; }
+
+        /* Área de Conteúdo */
+        main { flex-grow: 1; padding: 40px; overflow-y: auto; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 700px; }
+        h2 { margin-top: 0; color: var(--primary); }
+        .info-group { margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+        .label { font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: bold; }
+        .value { font-size: 16px; margin-top: 5px; }
+        .hidden { display: none; }
+        
+        /* Botão de Download */
+        .btn-download { display: inline-block; margin-top: 15px; padding: 12px 24px; background: var(--accent); color: white; text-decoration: none; border-radius: 6px; font-weight: bold; transition: background 0.2s; }
+        .btn-download:hover { background: #1d4ed8; }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="logo">Core Cloud</div>
+        <nav>
+            <a onclick="switchMenu('dados')" id="menu-dados" class="active">Dados Cadastrais</a>
+            <a onclick="switchMenu('acesso')" id="menu-acesso">Acesso Core Cloud</a>
+            <a onclick="switchMenu('download')" id="menu-download">Baixar Software</a>
+        </nav>
+        <div class="logout" onclick="logout()">Sair do Sistema</div>
+    </aside>
+
+    <main>
+        <section id="sessao-dados">
+            <h2>Dados Cadastrais</h2>
+            <div class="card" id="dados-cliente">
+                <p>Carregando dados...</p>
+            </div>
+        </section>
+
+        <section id="sessao-acesso" class="hidden">
+            <h2>Acesso ao Software Core Cloud</h2>
+            <p>Utilize as credenciais abaixo para configurar o seu aplicativo desktop.</p>
+            <div class="card">
+                <div class="info-group">
+                    <div class="label">Usuário de Acesso</div>
+                    <div class="value" id="coreUser">Aguardando liberação...</div>
+                </div>
+                <div class="info-group">
+                    <div class="label">Senha de Acesso</div>
+                    <div class="value" id="corePassword">********</div>
+                </div>
+                <p style="font-size: 13px; color: #ef4444;">* Estas credenciais são geradas manualmente pela nossa equipe.</p>
+            </div>
+        </section>
+
+        <section id="sessao-download" class="hidden">
+            <h2>Baixar Software</h2>
+            <p>Faça o download da versão do instalador pré-configurado para a sua empresa.</p>
+            <div class="card" style="text-align: center; padding: 40px 20px;">
+                <h3 style="margin-top: 0; color: #1e293b;">Instalador Core Cloud</h3>
+                <p style="color: #64748b; font-size: 14px; margin-bottom: 25px;">Sistema Operacional: Windows</p>
+                <a id="btnDownload" href="#" target="_blank" class="btn-download">📥 Baixar Instalador Agora</a>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // COLOQUE SUAS CHAVES AQUI
+        const firebaseConfig = {
+            apiKey: "AIzaSyC6fo9PVQ5nYjXRezXCo_kgC5DcbL5o8o4",
+			authDomain: "corenexa-9d938.firebaseapp.com",
+			projectId: "corenexa-9d938",
+			storageBucket: "corenexa-9d938.firebasestorage.app",
+			messagingSenderId: "342666577648",
+			appId: "1:342666577648:web:775809b2f0bcac02f1a435"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const docRef = doc(db, "usuarios", user.uid);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    renderizarDados(docSnap.data());
+                }
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        function renderizarDados(dados) {
+            // Preenche Menu 1
+            document.getElementById('dados-cliente').innerHTML = `
+                <div class="info-group"><div class="label">Nome Completo</div><div class="value">${dados.nomeCompleto || '-'}</div></div>
+                <div class="info-group"><div class="label">CPF</div><div class="value">${dados.cpf || '-'}</div></div>
+                <div class="info-group"><div class="label">E-mail</div><div class="value">${dados.email || '-'}</div></div>
+                <div class="info-group"><div class="label">Telefone</div><div class="value">${dados.telefone || '-'}</div></div>
+                <div class="info-group"><div class="label">Data de Nascimento</div><div class="value">${dados.dataNascimento || '-'}</div></div>
+            `;
+            
+            // Preenche Menu 2
+            document.getElementById('coreUser').innerText = dados.coreUser || "Aguardando liberação...";
+            document.getElementById('corePassword').innerText = dados.corePassword || "Aguardando liberação...";
+
+            // Preenche Menu 3 (Link de Download)
+            document.getElementById('btnDownload').href = dados.downloadUrl || "#";
+            
+            // Se não houver link no banco, desabilita visualmente o botão
+            if (!dados.downloadUrl) {
+                document.getElementById('btnDownload').innerText = "Instalador Indisponível";
+                document.getElementById('btnDownload').style.background = "#94a3b8";
+                document.getElementById('btnDownload').style.pointerEvents = "none";
+            }
+        }
+
+        // Função Atualizada para alternar entre as 3 sessões
+        window.switchMenu = (menu) => {
+            // 1. Esconde todas as sessões
+            document.getElementById('sessao-dados').classList.add('hidden');
+            document.getElementById('sessao-acesso').classList.add('hidden');
+            document.getElementById('sessao-download').classList.add('hidden');
+            
+            // 2. Remove a marcação 'active' de todos os botões do menu
+            document.getElementById('menu-dados').classList.remove('active');
+            document.getElementById('menu-acesso').classList.remove('active');
+            document.getElementById('menu-download').classList.remove('active');
+
+            // 3. Mostra a sessão escolhida e marca o botão correspondente
+            if(menu === 'dados') {
+                document.getElementById('sessao-dados').classList.remove('hidden');
+                document.getElementById('menu-dados').classList.add('active');
+            } else if (menu === 'acesso') {
+                document.getElementById('sessao-acesso').classList.remove('hidden');
+                document.getElementById('menu-acesso').classList.add('active');
+            } else if (menu === 'download') {
+                document.getElementById('sessao-download').classList.remove('hidden');
+                document.getElementById('menu-download').classList.add('active');
+            }
+        }
+
+        window.logout = () => {
+            signOut(auth).then(() => window.location.href = "index.html");
+        }
+    </script>
+</body>
+</html>
