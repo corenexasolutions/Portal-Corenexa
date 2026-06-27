@@ -4,12 +4,12 @@ import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/fireb
 
 // COLOQUE SUAS CHAVES DO FIREBASE AQUI
 const firebaseConfig = {
-    apiKey: "SUA_API_KEY",
-    authDomain: "SEU_AUTH_DOMAIN",
-    projectId: "SEU_PROJECT_ID",
-    storageBucket: "SEU_STORAGE_BUCKET",
-    messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-    appId: "SEU_APP_ID"
+        apiKey: "AIzaSyC6fo9PVQ5nYjXRezXCo_kgC5DcbL5o8o4",
+		authDomain: "corenexa-9d938.firebaseapp.com",
+		projectId: "corenexa-9d938",
+		storageBucket: "corenexa-9d938.firebasestorage.app",
+		messagingSenderId: "342666577648",
+		appId: "1:342666577648:web:775809b2f0bcac02f1a435"
 };
 
 const app = initializeApp(firebaseConfig);
