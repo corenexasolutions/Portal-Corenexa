@@ -19,12 +19,20 @@ const db = getFirestore(app);
 // ==========================================
 // MÁSCARAS E UTILITÁRIOS
 // ==========================================
-const aplicarMascaraCpf = (inputElement) => {
+const aplicarMascaraCpf = (inputElement, isCampoMisto = false) => {
     if(!inputElement) return;
+    
     inputElement.addEventListener('input', (e) => {
         let valor = e.target.value;
-        if (!valor.includes('@')) { // Só aplica máscara se não parecer um email
-            valor = valor.replace(/\D/g, "");
+
+        // Se for o campo de login (misto) e o usuário digitar qualquer letra, deixa livre para o e-mail
+        if (isCampoMisto && /[a-zA-Z]/.test(valor)) {
+            return; 
+        }
+
+        // Se não tiver letras (ou não for campo misto), aplica a máscara de CPF
+        if (!valor.includes('@')) { 
+            valor = valor.replace(/\D/g, ""); // Remove o que não é número
             valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
             valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
             valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
