@@ -154,30 +154,61 @@ if (recuperarForm) {
 // LÓGICA DO DASHBOARD (dashboard.html)
 // ==========================================
 if (window.location.pathname.includes("dashboard")) {
+    
+    // Função auxiliar para colocar os pontos e traço no CPF apenas para exibição visual
+    const formatarCpfParaExibicao = (cpf) => {
+        if (!cpf) return 'Aguardando liberação...';
+        let v = cpf.replace(/\D/g, ""); // Garante que só existam números
+        if (v.length === 11) {
+            return v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+        }
+        return cpf; // Caso não seja um CPF padrão de 11 dígitos, mostra o texto puro
+    };
+
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             const docSnap = await getDoc(doc(db, "usuarios", user.uid));
             if (docSnap.exists()) {
                 const dados = docSnap.data();
-                // Preenche os dados
+                
+                // 1. Preenche a aba "Dados Cadastrais"
                 document.getElementById('lbl-nome').innerText = dados.nomeCompleto || '-';
-                document.getElementById('lbl-cpf').innerText = dados.cpf || '-';
+                document.getElementById('lbl-cpf').innerText = formatarCpfParaExibicao(dados.cpf);
                 document.getElementById('lbl-email').innerText = dados.email || '-';
-                document.getElementById('lbl-user').innerText = dados.coreUser || 'Aguardando liberação...';
+                
+                // 2. Preenche a aba "Acesso Core Cloud" (Aba de integração do app)
+                // Exibe o CPF formatado como Usuário e a senha gerada automaticamente
+                document.getElementById('lbl-user').innerText = formatarCpfParaExibicao(dados.coreUser);
                 document.getElementById('lbl-pass').innerText = dados.corePassword || 'Aguardando liberação...';
                 
+                // 3. Preenche a aba de Download
                 const btnDownload = document.getElementById('btnDownload');
-                btnDownload.href = dados.downloadUrl || "#";
-                if (!dados.downloadUrl) {
-                    btnDownload.innerText = "Instalador Indisponível";
-                    btnDownload.style.background = "#94a3b8";
-                    btnDownload.style.pointerEvents = "none";
+                if (btnDownload) {
+                    btnDownload.href = dados.downloadUrl || "#";
+                    if (!dados.downloadUrl) {
+                        btnDownload.innerText = "Instalador Indisponível";
+                        btnDownload.style.background = "#94a3b8";
+                        btnDownload.style.pointerEvents = "none";
+                    }
                 }
             }
         } else {
             window.location.href = "index.html";
         }
     });
+
+    // Funções globais para alternar os menus laterais
+    window.switchMenu = (menuId) => {
+        document.querySelectorAll('.main-content section').forEach(sec => sec.classList.remove('active'));
+        document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
+        document.getElementById('sessao-' + menuId).classList.add('active');
+        document.getElementById('menu-' + menuId).classList.add('active');
+    };
+
+    window.logout = () => {
+        signOut(auth).then(() => window.location.href = "index.html");
+    };
+}
 
     // Funções globais para o menu
     window.switchMenu = (menuId) => {
