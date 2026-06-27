@@ -46,7 +46,8 @@ const aplicarMascaraCpf = (inputElement, isCampoMisto = false) => {
 // ==========================================
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
-    aplicarMascaraCpf(document.getElementById('identificador'));
+    // Passamos 'true' no segundo parâmetro para avisar que este campo aceita e-mail
+    aplicarMascaraCpf(document.getElementById('identificador'), true); 
 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -81,7 +82,8 @@ if (loginForm) {
 // ==========================================
 const registroForm = document.getElementById('registroForm');
 if (registroForm) {
-    aplicarMascaraCpf(document.getElementById('cpf'));
+    // Aqui não passamos o 'true', então ele só aceitará números
+    aplicarMascaraCpf(document.getElementById('cpf')); 
 
     registroForm.addEventListener('submit', async (e) => {
         e.preventDefault();
