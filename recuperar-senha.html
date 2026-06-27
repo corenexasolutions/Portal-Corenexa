@@ -4,80 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperar Senha - CoreNexa</title>
-    <style>
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f9; margin: 0; }
-        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
-        /* Botão laranja para diferenciar a ação */
-        button { width: 100%; padding: 10px; background: #fd7e14; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        button:hover { background: #e86e04; }
-        .link-voltar { display: block; margin-top: 15px; color: #007bff; text-decoration: none; font-size: 14px; }
-        #mensagemSucesso { display: none; color: green; margin-top: 15px; font-weight: bold; }
-    </style>
+    <link rel="icon" href="img/ico.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div class="container">
-        <h2>Recuperar Senha</h2>
-        <p style="font-size: 14px; color: #555;">Digite o e-mail da sua conta CoreNexa. Enviaremos um link para você redefinir sua senha.</p>
-        
-        <form id="recuperarForm">
-            <input type="email" id="email" placeholder="Seu e-mail cadastrado" required>
-            <button type="submit">Enviar Link de Recuperação</button>
-        </form>
-
-        <p id="mensagemSucesso">E-mail de recuperação enviado! Verifique sua caixa de entrada e spam.</p>
-
-        <a href="index.html" class="link-voltar">Voltar para o Login</a>
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <img src="img/ico.png" alt="CoreNexa Logo" class="portal-logo">
+            <h2>Recuperar Senha</h2>
+            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Enviaremos um link de recuperação para o seu e-mail.</p>
+            
+            <form id="recuperarForm">
+                <div class="form-group">
+                    <input type="email" id="email" placeholder="Seu e-mail cadastrado" required>
+                </div>
+                <button type="submit" class="btn-submit">Enviar Link</button>
+            </form>
+            <div id="mensagemSucesso" style="display: none; color: #16a34a; font-weight: bold; margin-top: 20px;">E-mail enviado com sucesso! Verifique sua caixa de entrada.</div>
+            
+            <div class="auth-links">
+                <p style="margin-top: 15px;"><a href="index.html">Voltar para o Login</a></p>
+            </div>
+        </div>
     </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        // Importando a função específica para redefinir senha
-        import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-
-        // COLOQUE SUAS CHAVES AQUI
-        const firebaseConfig = {
-            apiKey: "AIzaSyC6fo9PVQ5nYjXRezXCo_kgC5DcbL5o8o4",
-			authDomain: "corenexa-9d938.firebaseapp.com",
-			projectId: "corenexa-9d938",
-			storageBucket: "corenexa-9d938.firebasestorage.app",
-			messagingSenderId: "342666577648",
-			appId: "1:342666577648:web:775809b2f0bcac02f1a435"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        document.getElementById('recuperarForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const botao = document.querySelector('button');
-            
-            botao.disabled = true;
-            botao.innerText = "Enviando...";
-
-            try {
-                // Chama a função do Firebase que envia o e-mail
-                await sendPasswordResetEmail(auth, email);
-                
-                // Mostra a mensagem de sucesso e esconde o formulário
-                document.getElementById('recuperarForm').style.display = 'none';
-                document.getElementById('mensagemSucesso').style.display = 'block';
-
-            } catch (error) {
-                botao.disabled = false;
-                botao.innerText = "Enviar Link de Recuperação";
-                
-                // Tratamento de erros comuns
-                if(error.code === 'auth/user-not-found' || error.code === 'auth/invalid-email') {
-                    alert("E-mail não encontrado ou inválido.");
-                } else {
-                    alert("Erro ao enviar o e-mail: " + error.message);
-                }
-            }
-        });
-    </script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
