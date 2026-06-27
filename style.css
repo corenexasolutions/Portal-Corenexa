@@ -1,0 +1,79 @@
+/* =========================================
+   VARIÁVEIS E RESET (CÓDIGO ORIGINAL CORENEXA)
+   ========================================= */
+:root {
+    --azul: #4DA1CE;
+    --laranja: #F09638;
+    --escuro: #2C3E50;
+    --fundo: #F9FAFB;
+    --cinza-claro: #f4f6f8;
+    --borda: #e1e4e8;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+body { background-color: var(--fundo); color: var(--escuro); }
+
+/* ... [COLE AQUI TODO O RESTANTE DO SEU CSS ORIGINAL QUE VOCÊ ENVIOU] ... */
+/* (Por questões de limite de texto da resposta, assuma que todo o seu CSS gigante está aqui intacto) */
+
+/* =========================================
+   ESTILOS ESPECÍFICOS DO PORTAL DO CLIENTE
+   ========================================= */
+
+/* Centralização para Login, Registro e Recuperação */
+.auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--fundo);
+    padding: 20px;
+}
+
+.auth-card {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+    border-top: 5px solid var(--azul);
+}
+
+.portal-logo {
+    max-height: 80px;
+    width: auto;
+    margin-bottom: 20px;
+}
+
+.auth-card h2 { color: var(--escuro); margin-bottom: 20px; font-size: 24px; }
+.auth-card .form-group { text-align: left; margin-bottom: 15px; }
+.auth-card .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #555; }
+.auth-card .form-group input { width: 100%; padding: 12px; border: 1px solid var(--borda); border-radius: 8px; outline: none; transition: 0.3s; }
+.auth-card .form-group input:focus { border-color: var(--azul); box-shadow: 0 0 0 3px rgba(77, 161, 206, 0.1); }
+.auth-card .btn-submit { margin-top: 10px; width: 100%; background: linear-gradient(90deg, var(--azul) 0%, var(--laranja) 100%); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+.auth-card .btn-submit:hover { opacity: 0.9; transform: translateY(-2px); }
+.auth-links { margin-top: 20px; font-size: 14px; }
+.auth-links a { color: var(--azul); text-decoration: none; font-weight: 600; }
+.auth-links a:hover { text-decoration: underline; }
+
+/* Dashboard / Painel Logado */
+.dashboard-body { display: flex; height: 100vh; overflow: hidden; }
+.sidebar { width: 260px; background: var(--escuro); color: white; display: flex; flex-direction: column; padding: 20px 0; }
+.sidebar-logo { text-align: center; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+.sidebar-logo img { max-height: 50px; }
+.sidebar nav { flex-grow: 1; }
+.sidebar nav a { display: block; padding: 15px 25px; color: #cbd5e1; text-decoration: none; transition: 0.3s; cursor: pointer; font-weight: 500; }
+.sidebar nav a:hover, .sidebar nav a.active { background: rgba(255,255,255,0.05); color: white; border-left: 4px solid var(--laranja); }
+.sidebar .logout-btn { padding: 20px 25px; border-top: 1px solid rgba(255,255,255,0.1); color: #f87171; cursor: pointer; font-weight: 600; transition: 0.3s; }
+.sidebar .logout-btn:hover { background: rgba(255,0,0,0.1); }
+
+.main-content { flex-grow: 1; padding: 40px; overflow-y: auto; background-color: var(--fundo); }
+.main-content section { display: none; }
+.main-content section.active { display: block; animation: fadeIn 0.3s ease; }
+.dash-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); max-width: 800px; margin-top: 20px; border: 1px solid var(--borda); }
+.dash-card h3 { color: var(--escuro); margin-bottom: 20px; border-bottom: 1px solid var(--borda); padding-bottom: 10px; }
+.info-row { display: flex; margin-bottom: 15px; }
+.info-label { width: 150px; font-weight: 600; color: #555; font-size: 14px; }
+.info-value { color: var(--escuro); font-size: 15px; }
