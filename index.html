@@ -3,101 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Portal do Cliente</title>
-    <style>
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f9; margin: 0; }
-        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
-        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
-        button:hover { background: #0056b3; }
-        #areaDownload { display: none; margin-top: 20px; }
-        #linkDownload { display: inline-block; margin-top: 10px; padding: 10px 20px; background: #28a745; color: white; text-decoration: none; border-radius: 4px; }
-		.link-voltar { display: block; margin-top: 15px; color: #007bff; text-decoration: none; font-size: 14px; }
-    </style>
+    <title>Login - CoreNexa</title>
+    <link rel="icon" href="img/ico.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div class="container">
-        <h2>Acesso ao portal do cliente</h2>
-        
-        <form id="loginForm">
-            <input type="text" id="identificador" placeholder="Seu E-mail ou CPF" required>
-            <input type="password" id="senha" placeholder="Sua senha" required>
-            <button type="submit">Entrar</button>
-			<a href="recuperar-senha.html" style="display: block; margin-top: 15px; color: #007bff; text-decoration: none; font-size: 14px;">Esqueceu a senha?</a>
-			<a href="registro.html" class="link-voltar">Ainda não possuí conta? Criar Conta</a>
-		</form>
-
-		
-
-        <div id="areaDownload">
-            <h3 style="color: green;">Login realizado com sucesso!</h3>
-            <p>Clique no botão abaixo para baixar a sua versão do instalador.</p>
-            <a id="linkDownload" href="#" target="_blank">Baixar Instalador Core Cloud</a>
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <img src="img/ico.png" alt="CoreNexa Logo" class="portal-logo">
+            <h2>Acesso ao Portal</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>E-mail ou CPF</label>
+                    <input type="text" id="identificador" placeholder="Digite seu e-mail ou CPF" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="senha" placeholder="Sua senha" required>
+                </div>
+                <button type="submit" class="btn-submit">Entrar</button>
+            </form>
+            <div class="auth-links">
+                <p><a href="recuperar-senha.html">Esqueceu a senha?</a></p>
+                <p style="margin-top: 10px;">Não tem conta? <a href="registro.html">Criar agora</a></p>
+            </div>
         </div>
     </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-
-        // COLOQUE SUAS CHAVES AQUI
-        const firebaseConfig = {
-            apiKey: "AIzaSyC6fo9PVQ5nYjXRezXCo_kgC5DcbL5o8o4",
-			authDomain: "corenexa-9d938.firebaseapp.com",
-			projectId: "corenexa-9d938",
-			storageBucket: "corenexa-9d938.firebasestorage.app",
-			messagingSenderId: "342666577648",
-			appId: "1:342666577648:web:775809b2f0bcac02f1a435"
-			};
-
-        // Inicializa o Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Lógica de Login
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault(); 
-            
-            // Pega o que o usuário digitou (pode ser email ou cpf)
-            let identificador = document.getElementById('identificador').value.trim();
-            const senha = document.getElementById('senha').value;
-            let emailParaLogin = identificador; // Por padrão, assume que é e-mail
-
-            try {
-                // VERIFICAÇÃO: Se não tiver '@', vamos tratar como CPF
-                if (!identificador.includes('@')) {
-                    // Limpa pontos e traços que o usuário possa ter digitado
-                    const cpfLimpo = identificador.replace(/\D/g, '');
-                    
-                    // Vai na coleção "Ponte" e busca o e-mail vinculado a este CPF
-                    const cpfRef = doc(db, "cpfs_emails", cpfLimpo);
-                    const cpfSnap = await getDoc(cpfRef);
-
-                    if (cpfSnap.exists()) {
-                        // CPF encontrado! Substitui a variável pelo e-mail real
-                        emailParaLogin = cpfSnap.data().emailVinculado;
-                    } else {
-                        throw new Error("cpf-nao-encontrado");
-                    }
-                }
-
-                // Faz o login no Firebase Auth usando o E-mail (o digitado ou o traduzido)
-                const userCredential = await signInWithEmailAndPassword(auth, emailParaLogin, senha);
-                
-                // Login com sucesso, redireciona para o painel
-                window.location.href = "dashboard.html";
-
-            } catch (error) {
-                if(error.code === 'auth/invalid-credential' || error.message === "cpf-nao-encontrado") {
-                    alert("Dados incorretos. Verifique seu CPF/E-mail e senha.");
-                } else {
-                    alert("Erro ao fazer login: " + error.message);
-                }
-            }
-        });
-    </script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
