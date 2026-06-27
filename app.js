@@ -82,8 +82,7 @@ if (loginForm) {
 // ==========================================
 const registroForm = document.getElementById('registroForm');
 if (registroForm) {
-    // Aqui não passamos o 'true', então ele só aceitará números
-    aplicarMascaraCpf(document.getElementById('cpf')); 
+    aplicarMascaraCpf(document.getElementById('cpf'));
 
     registroForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -92,6 +91,7 @@ if (registroForm) {
 
         const nome = document.getElementById('nome').value;
         const telefone = document.getElementById('telefone').value;
+        // Captura o CPF e remove todos os pontos e traços
         const cpfLimpo = document.getElementById('cpf').value.replace(/\D/g, '');
         const nascimento = document.getElementById('nascimento').value;
         const email = document.getElementById('email').value;
@@ -101,9 +101,20 @@ if (registroForm) {
             const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
             const user = userCredential.user;
 
+            // Gera apenas a senha da aplicação de forma aleatória
+            const senhaGerada = gerarCredencial(8);
+
             await setDoc(doc(db, "usuarios", user.uid), {
-                nomeCompleto: nome, telefone: telefone, cpf: cpfLimpo, dataNascimento: nascimento,
-                email: email, downloadUrl: "", statusAtivo: true, criadoEm: new Date().toISOString()
+                nomeCompleto: nome, 
+                telefone: telefone, 
+                cpf: cpfLimpo, 
+                dataNascimento: nascimento,
+                email: email, 
+                downloadUrl: "", 
+                coreUser: cpfLimpo,          // O login passa a ser estritamente o CPF sem traços
+                corePassword: senhaGerada,   // A senha continua sendo a combinação aleatória
+                statusAtivo: true, 
+                criadoEm: new Date().toISOString()
             });
 
             await setDoc(doc(db, "cpfs_emails", cpfLimpo), { emailVinculado: email });
