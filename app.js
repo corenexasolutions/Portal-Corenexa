@@ -176,10 +176,50 @@ if (window.location.pathname.includes("dashboard")) {
                 document.getElementById('lbl-cpf').innerText = formatarCpfParaExibicao(dados.cpf);
                 document.getElementById('lbl-email').innerText = dados.email || '-';
                 
-                // 2. Preenche a aba "Acesso Core Cloud" (Aba de integração do app)
-                // Exibe o CPF formatado como Usuário e a senha gerada automaticamente
-                document.getElementById('lbl-user').innerText = formatarCpfParaExibicao(dados.coreUser);
-                document.getElementById('lbl-pass').innerText = dados.corePassword || 'Aguardando liberação...';
+                // 2. Preenche a aba "Acesso Core Cloud" (Dinâmico para múltiplos acessos)
+                const containerAcessos = document.getElementById('container-acessos');
+                if (containerAcessos) {
+                    containerAcessos.innerHTML = ''; // Limpa o container antes de renderizar
+
+                    // Verifica se o usuário possui o array "acessosCloud" no Firestore
+                    if (dados.acessosCloud && Array.isArray(dados.acessosCloud) && dados.acessosCloud.length > 0) {
+                        
+                        // Itera sobre a lista gerando um cartão para cada acesso
+                        dados.acessosCloud.forEach((acesso, index) => {
+                            const card = document.createElement('div');
+                            card.className = 'dash-card';
+                            card.style.marginBottom = '20px'; // Espaçamento entre os cartões
+                            
+                            card.innerHTML = `
+                                <h3>Credenciais de Integração - Acesso 0${index + 1}</h3>
+                                <div class="info-row"><div class="info-label">Usuário:</div><div class="info-value">${acesso.user}</div></div>
+                                <div class="info-row"><div class="info-label">Senha:</div><div class="info-value">${acesso.pass}</div></div>
+                            `;
+                            containerAcessos.appendChild(card);
+                        });
+
+                    } 
+                    // Fallback de segurança (Legado): Se não tiver o array, exibe os campos antigos
+                    else if (dados.coreUser) {
+                        const card = document.createElement('div');
+                        card.className = 'dash-card';
+                        card.innerHTML = `
+                            <h3>Credenciais de Integração</h3>
+                            <div class="info-row"><div class="info-label">Usuário:</div><div class="info-value">${formatarCpfParaExibicao(dados.coreUser)}</div></div>
+                            <div class="info-row"><div class="info-label">Senha:</div><div class="info-value">${dados.corePassword || 'Aguardando liberação...'}</div></div>
+                        `;
+                        containerAcessos.appendChild(card);
+                    } 
+                    // Caso o usuário não tenha absolutamente nenhum acesso configurado
+                    else {
+                        containerAcessos.innerHTML = `
+                            <div class="dash-card">
+                                <h3>Nenhum acesso liberado</h3>
+                                <p>Sua conta ainda está aguardando o provisionamento do ambiente.</p>
+                            </div>
+                        `;
+                    }
+                }
                 
                 // 3. Preenche a aba de Download
                 const btnDownload = document.getElementById('btnDownload');
