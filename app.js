@@ -111,8 +111,15 @@ if (registroForm) {
                 dataNascimento: nascimento,
                 email: email, 
                 downloadUrl: "", 
-                coreUser: cpfLimpo,          // O login passa a ser estritamente o CPF sem traços
-                corePassword: senhaGerada,   // A senha continua sendo a combinação aleatória
+                
+                // NOVO FORMATO: Array de objetos permitindo múltiplos logins
+                acessosCloud: [
+                    {
+                        user: cpfLimpo,
+                        pass: senhaGerada
+                    }
+                ],
+                
                 statusAtivo: true, 
                 criadoEm: new Date().toISOString()
             });
