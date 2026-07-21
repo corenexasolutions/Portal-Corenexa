@@ -210,15 +210,3 @@ if (window.location.pathname.includes("dashboard")) {
     };
 }
 
-    // Funções globais para o menu
-    window.switchMenu = (menuId) => {
-        document.querySelectorAll('.main-content section').forEach(sec => sec.classList.remove('active'));
-        document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
-        document.getElementById('sessao-' + menuId).classList.add('active');
-        document.getElementById('menu-' + menuId).classList.add('active');
-    };
-
-    window.logout = () => {
-        signOut(auth).then(() => window.location.href = "index.html");
-    };
-}
